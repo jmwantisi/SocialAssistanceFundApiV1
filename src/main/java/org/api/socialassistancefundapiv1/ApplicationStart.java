@@ -7,8 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "org.api.socialassistancefundapiv1.controller")
-public class Main {
+public class ApplicationStart {
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(ApplicationStart.class, args);
     }
 }
