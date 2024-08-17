@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// This controller can be renamed name to ApplicantController in future when plan to scale up
 @RestController
 @RequestMapping("/api/v1/applicants")
-public class ApplicantController {
-	// CRUD Operations
-	
+public class MainController {
+	// CRUD Operations for applicants
 	// Create	
 	@PostMapping
     public ResponseEntity<Object> create(@RequestBody Object applicant) {
