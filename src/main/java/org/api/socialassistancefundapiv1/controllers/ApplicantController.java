@@ -1,49 +1,65 @@
-package org.api.socialassistancefundapiv1.controller;
-import java.util.List;
-
+package org.api.socialassistancefundapiv1.controllers;
+import java.net.URI;
+import org.api.socialassistancefundapiv1.dtos.ApplicantDTO;
+import org.api.socialassistancefundapiv1.models.Applicant;
+import org.api.socialassistancefundapiv1.services.ApplicantService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-// This controller can be renamed name to ApplicantController in future when plan to scale up
 @RestController
-@RequestMapping("/api/v1/applicants")
-public class MainController {
-	// CRUD Operations for applicants
-	// Create	
-	@PostMapping
-    public ResponseEntity<Object> create(@RequestBody Object applicant) {
-        return null;
+@RequestMapping("/api/v1")
+public class ApplicantController {
+
+    @Autowired
+    private ApplicantService applicantService;
+    
+    // Fix this back to a DTO    
+    @PostMapping("/applicants")
+    public ResponseEntity<Applicant> createApplicant(@RequestBody ApplicantDTO applicant) {
+    	Applicant newApplicant = applicantService.create(applicant);
+    	URI location = ServletUriComponentsBuilder
+    	        .fromCurrentRequest()
+    	        .path("/{id}")
+    	        .buildAndExpand(newApplicant.getId())
+    	        .toUri();
+
+    	    return ResponseEntity.created(location).body(newApplicant);
     }
-	
-	//Index	
-	@GetMapping
-	public List<Object> list () {
-		return null;
-	}
-	
-	// Read
-	@GetMapping("/{id}")
-    public ResponseEntity<Object> read(@PathVariable Integer id) {
-        return null;
+
+    @GetMapping("/applicants/{id}")
+    public ResponseEntity<ApplicantDTO> getApplicant(@PathVariable Integer id) {
+    	ApplicantDTO applicant = applicantService.read(id);
+        if (applicant != null) {
+            return ResponseEntity.ok(applicant);
+        }
+        return ResponseEntity.notFound().build();
     }
-	
-	// Update
-	@PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody Object applicant) {
-        return null;
+    
+    
+    // FIX HERE
+    @PutMapping("/applicants/{id}")
+    public ResponseEntity<Applicant> updateApplicant(@PathVariable Integer id, @RequestBody ApplicantDTO applicant) {
+    	Applicant updatedApplicant = applicantService.update(id, applicant);
+        if (updatedApplicant != null) {
+            return ResponseEntity.ok(updatedApplicant);
+        }
+        return ResponseEntity.notFound().build();
     }
-	
-	// Delete
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        return null;
+
+    @DeleteMapping("/applicants/{id}")
+    public ResponseEntity<Void> deleteApplicant(@PathVariable Integer id) {
+    	applicantService.delete(id);
+        return ResponseEntity.noContent().build();
     }
-	
+
+    @GetMapping("/applicants")
+    public ResponseEntity<Page<ApplicantDTO>> listApplicants(Pageable pageable) {
+        Page<ApplicantDTO> applicants = applicantService.list(pageable);
+        return ResponseEntity.ok(applicants);
+    }
+
 }
