@@ -47,38 +47,23 @@ public class ApplicantService {
     
     @Autowired
     private ApplicantProgramRepository applicantProgramRepository;
-    
-    
 
     public Page<ApplicantDTO> list(Pageable pageable) {
         return applicantRepository.findAll(pageable).map(this::convertToDTO);
     }
-
-//    public ApplicantDTO create(ApplicantDTO applicantDTO) {
-//        Applicant applicant = convertToEntity(applicantDTO);
-//        List<Telephone> telephone = convertToEntity(applicantDTO.getTelephones());
-//        applicant.setTelephones(telephone);
-//
-//        return convertToDTO(applicantRepository.save(applicant));
-//    }
-    
-    //
     
     public Applicant create(ApplicantDTO payload) {
-        // Create Applicant entity
         final Applicant applicant = new Applicant();
-        
-        // Map basic fields
         applicant.setFirstName(payload.getFirstName());
         applicant.setMiddleName(payload.getMiddleName());
         applicant.setLastName(payload.getLastName());
         applicant.setSex(payload.getSex());
+        applicant.setDob(payload.getDob());
         applicant.setAge(payload.getAge());
         applicant.setMaritalStatus(payload.getMaritalStatus());
         applicant.setIdNumber(payload.getIdNumber());
         applicant.setApplicationDate(payload.getApplicationDate());
         
-        // Map relationships (County, SubCounty, Location, SubLocation, Village)
         County county = countyRepository.findById(payload.getCountyId())
             .orElseThrow(() -> new RuntimeException("County not found ID " + payload.getCountyId()));
         SubCounty subCounty = subCountyRepository.findById(payload.getSubCountyId())
@@ -96,7 +81,6 @@ public class ApplicantService {
         applicant.setSubLocation(subLocation);
         applicant.setVillage(village);
 
-        // Map Postal Address
         PostalAddress postalAddress = new PostalAddress();
         postalAddress.setAddressLine1(payload.getPostalAddress().getAddressLine1());
         postalAddress.setAddressLine2(payload.getPostalAddress().getAddressLine2());
@@ -105,7 +89,6 @@ public class ApplicantService {
 
         applicant.setPostalAddress(postalAddress);
 
-        // Map Physical Address
         PhysicalAddress physicalAddress = new PhysicalAddress();
         physicalAddress.setStreet(payload.getPhysicalAddress().getStreet());
         physicalAddress.setCity(payload.getPhysicalAddress().getCity());
@@ -141,17 +124,8 @@ public class ApplicantService {
             return applicantProgram;
         }).collect(Collectors.toList());
 
-        // 4. Save the ApplicantProgram entities
         applicantProgramRepository.saveAll(applicantPrograms);
-
-        // 5. Set the applicant's programs (for consistency if needed in the response or further logic)
-        //applicant.setApplicantProgrammes(applicantPrograms);
         
-        
-
-        //applicant.setApplicantProgrammes(programs);
-
-        // Save and return the updated Applicant
         return applicantRepository.save(savedApplicant);
     }
 
@@ -161,70 +135,117 @@ public class ApplicantService {
     }
 
     public void delete(Integer id) {
-    	applicantRepository.deleteById(id);
+    	Applicant applicant = applicantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Applicant not found ID: " + id));
+    	if(applicant != null) applicant.setVoid(1);
+    	applicantRepository.save(applicant);
+    }
+    
+    
+    public Applicant update(Integer id, ApplicantDTO payload) {
+        Applicant applicant = applicantRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Applicant not found ID: " + id));
+        
+        if (payload.getFirstName() != null) applicant.setFirstName(payload.getFirstName());
+        if (payload.getMiddleName() != null) applicant.setMiddleName(payload.getMiddleName());
+        if (payload.getLastName() != null) applicant.setLastName(payload.getLastName());
+        if (payload.getSex() != null) applicant.setSex(payload.getSex());
+        if (payload.getDob() != null) applicant.setDob(payload.getDob());
+        if (payload.getAge() != null) applicant.setAge(payload.getAge());
+        if (payload.getMaritalStatus() != null) applicant.setMaritalStatus(payload.getMaritalStatus());
+        if (payload.getIdNumber() != null) applicant.setIdNumber(payload.getIdNumber());
+        if (payload.getApplicationDate() != null) applicant.setApplicationDate(payload.getApplicationDate());
+
+        if (payload.getCountyId() != null) {
+            County county = countyRepository.findById(payload.getCountyId())
+                .orElseThrow(() -> new RuntimeException("County not found ID: " + payload.getCountyId()));
+            applicant.setCounty(county);
+        }
+        
+        if (payload.getSubCountyId() != null) {
+            SubCounty subCounty = subCountyRepository.findById(payload.getSubCountyId())
+                .orElseThrow(() -> new RuntimeException("SubCounty not found ID: " + payload.getSubCountyId()));
+            applicant.setSubCounty(subCounty);
+        }
+
+        if (payload.getLocationId() != null) {
+            Location location = locationRepository.findById(payload.getLocationId())
+                .orElseThrow(() -> new RuntimeException("Location not found ID: " + payload.getLocationId()));
+            applicant.setLocation(location);
+        }
+        
+        if (payload.getSubLocationId() != null) {
+            SubLocation subLocation = subLocationRepository.findById(payload.getSubLocationId())
+                .orElseThrow(() -> new RuntimeException("SubLocation not found ID: " + payload.getSubLocationId()));
+            applicant.setSubLocation(subLocation);
+        }
+
+        if (payload.getVillageId() != null) {
+            Village village = villageRepository.findById(payload.getVillageId())
+                .orElseThrow(() -> new RuntimeException("Village not found ID: " + payload.getVillageId()));
+            applicant.setVillage(village);
+        }
+
+        if (payload.getPostalAddress() != null) {
+            PostalAddress postalAddress = applicant.getPostalAddress();
+            if (postalAddress == null) {
+                postalAddress = new PostalAddress();
+            }
+            postalAddress.setAddressLine1(payload.getPostalAddress().getAddressLine1());
+            postalAddress.setAddressLine2(payload.getPostalAddress().getAddressLine2());
+            postalAddress.setPostalCode(payload.getPostalAddress().getPostalCode());
+            postalAddress = postalAddressRepository.save(postalAddress);
+            applicant.setPostalAddress(postalAddress);
+        }
+
+        if (payload.getPhysicalAddress() != null) {
+            PhysicalAddress physicalAddress = applicant.getPhysicalAddress();
+            if (physicalAddress == null) {
+                physicalAddress = new PhysicalAddress();
+            }
+            physicalAddress.setStreet(payload.getPhysicalAddress().getStreet());
+            physicalAddress.setCity(payload.getPhysicalAddress().getCity());
+            physicalAddress.setHouseNumber(payload.getPhysicalAddress().getHouseNumber());
+            physicalAddress = physicalAddressRepository.save(physicalAddress);
+            applicant.setPhysicalAddress(physicalAddress);
+        }
+
+        if (payload.getTelephones() != null) {
+            List<Telephone> existingTelephones = telephoneRepository.findByApplicantId(id);
+            existingTelephones.forEach(telephoneRepository::delete);
+
+            List<Telephone> telephones = payload.getTelephones().stream().map(phoneDto -> {
+                Telephone telephone = new Telephone();
+                telephone.setPhoneNumber(phoneDto.getPhoneNumber());
+                telephone.setType(phoneDto.getType());
+                telephone.setApplicant(applicant);
+                return telephone;
+            }).collect(Collectors.toList());
+
+            telephoneRepository.saveAll(telephones);
+        }
+
+        if (payload.getApplicantProgrammes() != null) {
+            List<ApplicantProgram> existingPrograms = applicantProgramRepository.findByApplicantId(id);
+            existingPrograms.forEach(applicantProgramRepository::delete);
+
+            List<ApplicantProgram> applicantPrograms = payload.getApplicantProgrammes().stream().map(programId -> {
+                Program program = programRepository.findById(programId)
+                    .orElseThrow(() -> new RuntimeException("Program not found ID: " + programId));
+                
+                ApplicantProgram applicantProgram = new ApplicantProgram();
+                applicantProgram.setApplicant(applicant);
+                applicantProgram.setProgram(program);
+                applicantProgram.setApplicationDate(applicant.getApplicationDate());
+                return applicantProgram;
+            }).collect(Collectors.toList());
+
+            applicantProgramRepository.saveAll(applicantPrograms);
+        }
+
+        return applicantRepository.save(applicant);
     }
 
-    public ApplicantDTO update(Integer id, ApplicantDTO updatedApplicantDTO) {
-        Optional<Applicant> existingApplicantOptional = applicantRepository.findById(id);
-
-        if (existingApplicantOptional.isPresent()) {
-            Applicant existingApplicant = existingApplicantOptional.get();
-            existingApplicant.setFirstName(updatedApplicantDTO.getFirstName());
-            existingApplicant.setMiddleName(updatedApplicantDTO.getMiddleName());
-            existingApplicant.setLastName(updatedApplicantDTO.getLastName());
-            existingApplicant.setSex(updatedApplicantDTO.getSex());
-            existingApplicant.setAge(updatedApplicantDTO.getAge());
-            existingApplicant.setMaritalStatus(updatedApplicantDTO.getMaritalStatus());
-            existingApplicant.setIdNumber(updatedApplicantDTO.getIdNumber());
-            
-            existingApplicant.setPostalAddress(convertToEntity(updatedApplicantDTO.getPostalAddress()));
-            existingApplicant.setPhysicalAddress(convertToEntity(updatedApplicantDTO.getPhysicalAddress()));
-            existingApplicant.setTelephones(convertToEntity(updatedApplicantDTO.getTelephones()));
-            existingApplicant.setApplicationDate(updatedApplicantDTO.getApplicationDate());
-
-            return convertToDTO(applicantRepository.save(existingApplicant));
-        } else {
-            return null; // Handle case where the applicant doesn't exist
-        }
-    }
-
-
-    private Applicant convertToEntity(ApplicantDTO dto) {
-        Applicant applicant = new Applicant();
-        applicant.setId(dto.getId());
-        applicant.setFirstName(dto.getFirstName());
-        applicant.setMiddleName(dto.getMiddleName());
-        applicant.setLastName(dto.getLastName());
-        applicant.setSex(dto.getSex());
-        applicant.setAge(dto.getAge());
-        applicant.setMaritalStatus(dto.getMaritalStatus());
-        applicant.setIdNumber(dto.getIdNumber());
-        applicant.setPostalAddress(convertToEntity(dto.getPostalAddress()));
-        applicant.setPhysicalAddress(convertToEntity(dto.getPhysicalAddress()));
-        applicant.setTelephones(convertToEntity(dto.getTelephones()));
-        applicant.setApplicationDate(dto.getApplicationDate());
-        
-        //
-        if (dto.getCountyId() != null) {
-        	applicant.setCounty(countyRepository.findById(dto.getCountyId()).orElse(null));
-        }
-        
-        if (dto.getSubCountyId() != null) {
-            applicant.setSubCounty(subCountyRepository.findById(dto.getSubCountyId()).orElse(null));
-        }
-        
-        if (dto.getLocationId() != null) {
-            applicant.setLocation(locationRepository.findById(dto.getLocationId()).orElse(null));
-        }
-        
-        if (dto.getSubLocationId() != null) {
-            applicant.setSubLocation(subLocationRepository.findById(dto.getSubLocationId()).orElse(null));
-        }
-        if (dto.getVillageId() != null) {
-            applicant.setVillage(villageRepository.findById(dto.getVillageId()).orElse(null));
-        }
-        return applicant;
-    }
     
     public PostalAddress convertToEntity(PostalAddressDTO postalAddressDTO) {
         PostalAddress postalAddress = new PostalAddress();
@@ -267,8 +288,6 @@ public class ApplicantService {
             .map(this::convertToEntity)
             .collect(Collectors.toList());
     }
-    
-    // DTO convensions
     
     public ApplicantDTO convertToDTO(Applicant applicant) {
         if (applicant == null) {
@@ -329,6 +348,56 @@ public class ApplicantService {
         dto.setPhoneNumber(telephone.getPhoneNumber());
         dto.setType(telephone.getType());
 
+        return dto;
+    }
+
+    public CountyDTO convertToDTO(County county) {
+        if (county == null) {
+            return null;
+        }
+        CountyDTO dto = new CountyDTO();
+        dto.setId(county.getId());
+        dto.setName(county.getName());
+        return dto;
+    }
+
+    public SubCountyDTO convertToDTO(SubCounty subCounty) {
+        if (subCounty == null) {
+            return null;
+        }
+        SubCountyDTO dto = new SubCountyDTO();
+        dto.setId(subCounty.getId());
+        dto.setName(subCounty.getName());
+        return dto;
+    }
+
+    public LocationDTO convertToDTO(Location location) {
+        if (location == null) {
+            return null;
+        }
+        LocationDTO dto = new LocationDTO();
+        dto.setId(location.getId());
+        dto.setName(location.getName());
+        return dto;
+    }
+
+    public SubLocationDTO convertToDTO(SubLocation subLocation) {
+        if (subLocation == null) {
+            return null;
+        }
+        SubLocationDTO dto = new SubLocationDTO();
+        dto.setId(subLocation.getId());
+        dto.setName(subLocation.getName());
+        return dto;
+    }
+
+    public VillageDTO convertToDTO(Village village) {
+        if (village == null) {
+            return null;
+        }
+        VillageDTO dto = new VillageDTO();
+        dto.setId(village.getId());
+        dto.setName(village.getName());
         return dto;
     }
 }
