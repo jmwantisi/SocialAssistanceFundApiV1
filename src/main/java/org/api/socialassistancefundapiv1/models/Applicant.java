@@ -164,12 +164,12 @@ public class Applicant {
         updatedAt = LocalDateTime.now();
     }
     
-    public int get_void() {
-		return _void;
+    public int getVoid() {
+		return voidColumn;
 	}
 
-	public void set_void(int _void) {
-		this._void = _void;
+	public void setVoid(int _void) {
+		this.voidColumn = _void;
 	}
 
 	public List<ApplicantProgram> getApplicantProgrammes() {
@@ -249,7 +249,7 @@ public class Applicant {
     private LocalDateTime updatedAt;
     
     @Column(name = "void", nullable = false, columnDefinition = "INT DEFAULT 0")
-    private int _void;
+    private int voidColumn;
 
 	@ManyToMany
     @JoinTable(

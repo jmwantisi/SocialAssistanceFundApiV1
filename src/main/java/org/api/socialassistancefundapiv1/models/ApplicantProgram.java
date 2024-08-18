@@ -62,6 +62,17 @@ public class ApplicantProgram {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    public int getVoid() {
+		return voidColumn;
+	}
+
+	public void setVoid(int _void) {
+		this.voidColumn = _void;
+	}
+
+	@Column(name = "void", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int voidColumn;
 
     @PrePersist
     protected void onCreate() {
