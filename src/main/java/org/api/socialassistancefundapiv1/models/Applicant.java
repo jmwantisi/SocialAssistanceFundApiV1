@@ -55,6 +55,15 @@ public class Applicant {
 	public void setSex(String sex) {
 		this.sex = sex;
 	}
+	
+	public LocalDate getDob() {
+		return dob;
+	}
+	
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
+	}
+
 
 	public int getAge() {
 		return age;
@@ -154,6 +163,14 @@ public class Applicant {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    
+    public int get_void() {
+		return _void;
+	}
+
+	public void set_void(int _void) {
+		this._void = _void;
+	}
 
 	public List<ApplicantProgram> getApplicantProgrammes() {
 		return applicantProgrammes;
@@ -181,8 +198,11 @@ public class Applicant {
 
     @Column(name = "sex", nullable = false)
     private String sex;
+    
+    @Column(name = "dob", nullable = false)
+    private LocalDate dob;
 
-    @Column(name = "age", nullable = false)
+	@Column(name = "age", nullable = false)
     private int age;
 
     @Column(name = "marital_status", nullable = false)
@@ -227,8 +247,11 @@ public class Applicant {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "void", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int _void;
 
-    @ManyToMany
+	@ManyToMany
     @JoinTable(
         name = "applicant_programs",
         joinColumns = @JoinColumn(name = "applicant_id", columnDefinition = "INT"),
