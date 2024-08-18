@@ -53,12 +53,20 @@ public class ApplicantDTO {
 		this.sex = sex;
 	}
 	
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 	
 	public void setAge(int age) {
 		this.age = age;
+	}
+	
+	public LocalDate getDob() {
+		return dob;
+	}
+
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
 	}
 	
 	public String getMaritalStatus() {
@@ -181,6 +189,9 @@ public class ApplicantDTO {
 	
 	@JsonProperty("age")
     private Integer age;
+
+	@JsonProperty("dob")
+	private LocalDate dob;
 	
 	@JsonProperty("marital_status")
     private String maritalStatus;
