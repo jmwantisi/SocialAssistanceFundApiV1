@@ -36,7 +36,6 @@ public class ApplicantProgramDTO {
 		this.applicationDate = applicationDate;
 	}
 	
-	
 	@JsonProperty("id")
 	private int id;
 	
