@@ -136,12 +136,24 @@ public class DatabaseSeeder implements CommandLineRunner {
     private void seedPrograms() {
         if (programRepository.count() == 0) {
             Program program1 = new Program();
-            program1.setName("Program A");
+            program1.setName("Orphans and vulnerable children");
             programRepository.save(program1);
 
             Program program2 = new Program();
-            program2.setName("Program B");
+            program2.setName("Poor elderly persons");
             programRepository.save(program2);
+
+            Program program3 = new Program();
+            program3.setName("Persons with disability");
+            programRepository.save(program3);
+
+            Program program4 = new Program();
+            program3.setName("Persons in extreme poverty");
+            programRepository.save(program4);
+
+            Program program5 = new Program();
+            program3.setName("Any other");
+            programRepository.save(program5);
 
             System.out.println("Programs Seeded!");
         }
