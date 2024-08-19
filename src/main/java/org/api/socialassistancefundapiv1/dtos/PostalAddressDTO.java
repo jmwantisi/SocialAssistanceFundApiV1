@@ -38,10 +38,10 @@ public class PostalAddressDTO {
 	@JsonProperty("id")
 	private int id;
 	
-	@JsonProperty("address_line_1")
+	@JsonProperty("address_line1")
     private String addressLine1;
 	
-	@JsonProperty("address_line_2")
+	@JsonProperty("address_line2")
     private String addressLine2;
 	
 	@JsonProperty("postal_code")
