@@ -1,22 +1,20 @@
-# Spring Boot 2 Application
+# Socal Assistance Fund API Version 1
 
 ## Project Overview
 
 This project is a Spring Boot 2 application designed to [briefly describe the purpose of your application]. The project uses Java, Spring Boot, and other related technologies to [give a summary of what the app does or the problem it solves].
 
-## Features
+## Endpoints
 
-- Feature 1: [Briefly describe the feature]
-- Feature 2: [Briefly describe the feature]
-- Feature 3: [Briefly describe the feature]
+- Feature 1: <host_domain>/swagger-ui/index.html#
 
 ## Requirements
 
 Before running this project, ensure you have the following installed on your machine:
 
-- Java Development Kit (JDK) 8+
-- Maven 3+
-- MySQL (or any other RDBMS of your choice)
+- Install JDK 17
+- Mave
+- MySQL
 - Apache Server (Optional for deployment)
 - [Any other specific dependencies]
 
@@ -25,5 +23,5 @@ Before running this project, ensure you have the following installed on your mac
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/yourprojectname.git
-cd yourprojectname
+git clone https://github.com/jmwantisi/SocialAssistanceFundApiV1
+cd SocialAssistanceFundApiV1
