@@ -3,10 +3,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.api.socialassistancefundapiv1.models.*;
 import org.api.socialassistancefundapiv1.repositories.*;
@@ -53,13 +50,13 @@ public class ApplicantService {
     }
     
     public Applicant create(ApplicantDTO payload) {
+    	System.out.println(payload);
         final Applicant applicant = new Applicant();
         applicant.setFirstName(payload.getFirstName());
         applicant.setMiddleName(payload.getMiddleName());
         applicant.setLastName(payload.getLastName());
         applicant.setSex(payload.getSex());
         applicant.setDob(payload.getDob());
-        applicant.setAge(payload.getAge());
         applicant.setMaritalStatus(payload.getMaritalStatus());
         applicant.setIdNumber(payload.getIdNumber());
         applicant.setApplicationDate(payload.getApplicationDate());
@@ -151,7 +148,6 @@ public class ApplicantService {
         if (payload.getLastName() != null) applicant.setLastName(payload.getLastName());
         if (payload.getSex() != null) applicant.setSex(payload.getSex());
         if (payload.getDob() != null) applicant.setDob(payload.getDob());
-        if (payload.getAge() != null) applicant.setAge(payload.getAge());
         if (payload.getMaritalStatus() != null) applicant.setMaritalStatus(payload.getMaritalStatus());
         if (payload.getIdNumber() != null) applicant.setIdNumber(payload.getIdNumber());
         if (payload.getApplicationDate() != null) applicant.setApplicationDate(payload.getApplicationDate());
@@ -301,7 +297,6 @@ public class ApplicantService {
         dto.setMiddleName(applicant.getMiddleName());
         dto.setLastName(applicant.getLastName());
         dto.setSex(applicant.getSex());
-        dto.setAge(applicant.getAge());
         dto.setMaritalStatus(applicant.getMaritalStatus());
         dto.setIdNumber(applicant.getIdNumber());
 
