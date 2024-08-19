@@ -18,8 +18,7 @@ Before running this project, ensure you have the following installed on your mac
 - Install JDK 17
 - Maven
 - MySQL
-- Apache Server (Optional for deployment)
-- [Any other specific dependencies]
+- Apache Server (The API will run an embed Apache Server)
 
 ## Installation
 
