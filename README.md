@@ -11,6 +11,9 @@ income status. An applicant can apply for one or more social assistance programm
 eligibility has been determined, then the applicants will be informed by email or through
 SMS alerts.
 
+On a side note: This an alternative monolithic build in:
+  - [.NET Core 9](https://github.com/jmwantisi/social-assistance-fund-mis-mvc)
+
 ## Requirements
 
 Before running this project, ensure you have the following installed on your machine:
